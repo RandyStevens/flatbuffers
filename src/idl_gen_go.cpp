@@ -113,7 +113,13 @@ class GoGenerator : public BaseGenerator {
  private:
   Namespace go_namespace_;
   Namespace *cur_name_space_;
-  std::set<const Namespace*> tracked_imported_namespaces_;
+
+  struct NamespacePtrLess {
+    bool operator()(const Namespace *a, const Namespace *b) const {
+      return *a < *b;
+    }
+  };
+  std::set<const Namespace *, NamespacePtrLess> tracked_imported_namespaces_;
 
   // Most field accessors need to retrieve and test the field offset first,
   // this is the prefix code for that.
@@ -153,7 +159,7 @@ class GoGenerator : public BaseGenerator {
   }
 
   // A single enum member.
-  void EnumMember(const EnumDef &enum_def, const EnumVal ev,
+  void EnumMember(const EnumDef &enum_def, const EnumVal &ev,
                   std::string *code_ptr) {
     std::string &code = *code_ptr;
     code += "\t";
@@ -162,7 +168,7 @@ class GoGenerator : public BaseGenerator {
     code += " ";
     code += GetEnumTypeName(enum_def);
     code += " = ";
-    code += NumToString(ev.value) + "\n";
+    code += enum_def.ToString(ev) + "\n";
   }
 
   // End enum code.
@@ -725,8 +731,7 @@ class GoGenerator : public BaseGenerator {
     GenComment(enum_def.doc_comment, code_ptr, nullptr);
     GenEnumType(enum_def, code_ptr);
     BeginEnum(code_ptr);
-    for (auto it = enum_def.vals.vec.begin(); it != enum_def.vals.vec.end();
-         ++it) {
+    for (auto it = enum_def.Vals().begin(); it != enum_def.Vals().end(); ++it) {
       auto &ev = **it;
       GenComment(ev.doc_comment, code_ptr, nullptr, "\t");
       EnumMember(enum_def, ev, code_ptr);
@@ -734,8 +739,7 @@ class GoGenerator : public BaseGenerator {
     EndEnum(code_ptr);
 
     BeginEnumNames(enum_def, code_ptr);
-    for (auto it = enum_def.vals.vec.begin(); it != enum_def.vals.vec.end();
-         ++it) {
+    for (auto it = enum_def.Vals().begin(); it != enum_def.Vals().end(); ++it) {
       auto &ev = **it;
       EnumNameMember(enum_def, ev, code_ptr);
     }

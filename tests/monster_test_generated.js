@@ -25,42 +25,81 @@ MyGame.Example2 = MyGame.Example2 || {};
 MyGame.OtherNameSpace = MyGame.OtherNameSpace || {};
 
 /**
- * @enum
+ * @enum {number}
  */
 MyGame.Example.Color = {
-  Red: 1, 1: 'Red',
-  Green: 2, 2: 'Green',
-  Blue: 8, 8: 'Blue'
+  Red: 1,
+  Green: 2,
+  Blue: 8
 };
 
 /**
- * @enum
+ * @enum {string}
+ */
+MyGame.Example.ColorName = {
+  1: 'Red',
+  2: 'Green',
+  8: 'Blue'
+};
+
+/**
+ * @enum {number}
  */
 MyGame.Example.Any = {
-  NONE: 0, 0: 'NONE',
-  Monster: 1, 1: 'Monster',
-  TestSimpleTableWithEnum: 2, 2: 'TestSimpleTableWithEnum',
-  MyGame_Example2_Monster: 3, 3: 'MyGame_Example2_Monster'
+  NONE: 0,
+  Monster: 1,
+  TestSimpleTableWithEnum: 2,
+  MyGame_Example2_Monster: 3
 };
 
 /**
- * @enum
+ * @enum {string}
+ */
+MyGame.Example.AnyName = {
+  0: 'NONE',
+  1: 'Monster',
+  2: 'TestSimpleTableWithEnum',
+  3: 'MyGame_Example2_Monster'
+};
+
+/**
+ * @enum {number}
  */
 MyGame.Example.AnyUniqueAliases = {
-  NONE: 0, 0: 'NONE',
-  M: 1, 1: 'M',
-  T: 2, 2: 'T',
-  M2: 3, 3: 'M2'
+  NONE: 0,
+  M: 1,
+  T: 2,
+  M2: 3
 };
 
 /**
- * @enum
+ * @enum {string}
+ */
+MyGame.Example.AnyUniqueAliasesName = {
+  0: 'NONE',
+  1: 'M',
+  2: 'T',
+  3: 'M2'
+};
+
+/**
+ * @enum {number}
  */
 MyGame.Example.AnyAmbiguousAliases = {
-  NONE: 0, 0: 'NONE',
-  M1: 1, 1: 'M1',
-  M2: 2, 2: 'M2',
-  M3: 3, 3: 'M3'
+  NONE: 0,
+  M1: 1,
+  M2: 2,
+  M3: 3
+};
+
+/**
+ * @enum {string}
+ */
+MyGame.Example.AnyAmbiguousAliasesName = {
+  0: 'NONE',
+  1: 'M1',
+  2: 'M2',
+  3: 'M3'
 };
 
 /**
@@ -307,7 +346,7 @@ MyGame.Example.TestSimpleTableWithEnum.getRootAsTestSimpleTableWithEnum = functi
  */
 MyGame.Example.TestSimpleTableWithEnum.prototype.color = function() {
   var offset = this.bb.__offset(this.bb_pos, 4);
-  return offset ? /** @type {MyGame.Example.Color} */ (this.bb.readInt8(this.bb_pos + offset)) : MyGame.Example.Color.Green;
+  return offset ? /** @type {MyGame.Example.Color} */ (this.bb.readUint8(this.bb_pos + offset)) : MyGame.Example.Color.Green;
 };
 
 /**
@@ -321,7 +360,7 @@ MyGame.Example.TestSimpleTableWithEnum.prototype.mutate_color = function(value) 
     return false;
   }
 
-  this.bb.writeInt8(this.bb_pos + offset, value);
+  this.bb.writeUint8(this.bb_pos + offset, value);
   return true;
 };
 
@@ -478,7 +517,7 @@ MyGame.Example.Vec3.prototype.mutate_test1 = function(value) {
  * @returns {MyGame.Example.Color}
  */
 MyGame.Example.Vec3.prototype.test2 = function() {
-  return /** @type {MyGame.Example.Color} */ (this.bb.readInt8(this.bb_pos + 24));
+  return /** @type {MyGame.Example.Color} */ (this.bb.readUint8(this.bb_pos + 24));
 };
 
 /**
@@ -492,7 +531,7 @@ MyGame.Example.Vec3.prototype.mutate_test2 = function(value) {
     return false;
   }
 
-  this.bb.writeInt8(this.bb_pos + offset, value);
+  this.bb.writeUint8(this.bb_pos + offset, value);
   return true;
 };
 
@@ -992,7 +1031,7 @@ MyGame.Example.Monster.prototype.inventoryArray = function() {
  */
 MyGame.Example.Monster.prototype.color = function() {
   var offset = this.bb.__offset(this.bb_pos, 16);
-  return offset ? /** @type {MyGame.Example.Color} */ (this.bb.readInt8(this.bb_pos + offset)) : MyGame.Example.Color.Blue;
+  return offset ? /** @type {MyGame.Example.Color} */ (this.bb.readUint8(this.bb_pos + offset)) : MyGame.Example.Color.Blue;
 };
 
 /**
@@ -1006,7 +1045,7 @@ MyGame.Example.Monster.prototype.mutate_color = function(value) {
     return false;
   }
 
-  this.bb.writeInt8(this.bb_pos + offset, value);
+  this.bb.writeUint8(this.bb_pos + offset, value);
   return true;
 };
 
@@ -1799,7 +1838,7 @@ MyGame.Example.Monster.prototype.anyAmbiguous = function(obj) {
  */
 MyGame.Example.Monster.prototype.vectorOfEnums = function(index) {
   var offset = this.bb.__offset(this.bb_pos, 98);
-  return offset ? /** @type {MyGame.Example.Color} */ (this.bb.readInt8(this.bb.__vector(this.bb_pos + offset) + index)) : /** @type {MyGame.Example.Color} */ (0);
+  return offset ? /** @type {MyGame.Example.Color} */ (this.bb.readUint8(this.bb.__vector(this.bb_pos + offset) + index)) : /** @type {MyGame.Example.Color} */ (0);
 };
 
 /**
@@ -1811,11 +1850,11 @@ MyGame.Example.Monster.prototype.vectorOfEnumsLength = function() {
 };
 
 /**
- * @returns {Int8Array}
+ * @returns {Uint8Array}
  */
 MyGame.Example.Monster.prototype.vectorOfEnumsArray = function() {
   var offset = this.bb.__offset(this.bb_pos, 98);
-  return offset ? new Int8Array(this.bb.bytes().buffer, this.bb.bytes().byteOffset + this.bb.__vector(this.bb_pos + offset), this.bb.__vector_len(this.bb_pos + offset)) : null;
+  return offset ? new Uint8Array(this.bb.bytes().buffer, this.bb.bytes().byteOffset + this.bb.__vector(this.bb_pos + offset), this.bb.__vector_len(this.bb_pos + offset)) : null;
 };
 
 /**
